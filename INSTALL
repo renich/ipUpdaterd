@@ -1,0 +1,40 @@
+#
+# This was tested on Fedora 14 x86_64. It might work on any SysV and LSB compilant distro... I think...
+
+# Become root
+su -
+
+# Uncompress
+tar -xjf ipUpdater.tar.bz2
+
+# Go into the directory
+cd ipUpdater
+
+# Make sure the install script is executable
+chmod u+x ./install
+
+# Execute the install
+./install
+
+# Go to the conf file
+cd /usr/local/etc
+
+# Edit it
+vim ipUpdaterd.conf
+
+# Enter your username
+
+# Open another terminal and generate a base64 hash of your password (just to keep it encoded to other users eyes)
+echo "my_super_password" | base64
+
+# Copy that into the conf file
+
+# If you don't use a ppp connection, leave "myip" empty, if you do, uncomment the first myip and delete the otherone
+
+# Start the service
+service ipUpdaterd start
+
+# Activate the service on boot
+chkconfig ipUpdaterd on
+
+# Renich Bon Ciric <renich@woralelandia.com>

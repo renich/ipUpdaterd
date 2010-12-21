@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# check if is root
+if [ `id -u` != "0" ]; then
+        echo Command must be ran by root!
+        exit 1
+fi
+
+# install
+install etc/rc.d/init.d/ipUpdaterd /etc/rc.d/init.d
+install usr/local/etc/ipUpdaterd.conf /usr/local/etc
+install usr/local/sbin/ipUpdaterd /usr/local/sbin
+cat /dev/null > /var/log/ipUpdaterd.log && chcon -u system_u /var/log/ipUpdaterd.log && restorecon /var/log/ipUpdaterd.log
+
+exit 0

@@ -1,0 +1,25 @@
+#!/bin/bash
+# Last Update: Mon 20 Dec 2010 11:24:26 AM CST 
+#
+# Renich Bon Ciric <renich@intranetgb.com>
+# GPLv3
+#
+# Simple IP updater for DNSExit: http://dnsexit.com/
+
+# get configuration file
+conf=/usr/local/etc/ipUpdaterd.conf
+source $conf
+
+# do
+(while :; do
+    # DNSEXIT example url: http://www.dnsexit.com/RemoteUpdate.sv?login=yourlogin&password=yourpassword&host=yourhost.yourdomain.com&myip=xxx.xx.xx.xxx
+    logsave $logfile curl -vvvv -G -d "login=$login" -d "password=$password" -d "host=$host" -d "myip=$myip" $service &> /dev/null
+    
+    if [ $? == 0 ];then
+        logger -p daemon.info "this IP has been updated successfully: $myip"
+    else
+        logger -p daemon.info "IP update error. Check configuration, network or... something..."
+    fi
+
+    sleep 10m
+done) & disown -h -ar $!
