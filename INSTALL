@@ -1,5 +1,14 @@
+# INSTALL
 #
-# This was tested on Fedora 14 x86_64. It might work on any SysV and LSB compilant distro... I think...
+# This was tested on Fedora 14 x86_64. It might work on any SysV and LSB
+# compilant distro... I think...
+
+# Option 1:
+# Run the "install" script included in the package.
+su -c ./install
+
+# Option 2:
+# Install manually
 
 # Become root
 su -
