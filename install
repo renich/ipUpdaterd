@@ -27,9 +27,9 @@ echo -n "Do you want me to get your IP from an interface? (example: no | eth0, w
 read 'interface'
 
 if [ $(echo -n $interface | grep -i 'no') ]; then
-    ip="myip=''"
+    ip=null
 else
-    ip="myip='$(ip -4 address show ${interface} |/bin/awk -F'[/ ]' '/inet/{print$6}')'"
+    ip=$(ip -4 address show ${interface} |/bin/awk -F'[/ ]' '/inet/{print$6}')
 fi
 
 echo -n " \
@@ -48,7 +48,7 @@ if [ $(echo -n $answer | grep -i 'yes') ]; then
     sed -ri "s@login='<some user>'@login=${login}@g" /usr/local/etc/ipUpdaterd.conf
     sed -ri "s@password='<some cool password base64 encoded>'@password='${password}'@g" /usr/local/etc/ipUpdaterd.conf
     sed -ri "s@host='<some, already registered, host>'@host='${host}'@g" /usr/local/etc/ipUpdaterd.conf
-    sed -ri "s@myip=''@${ip}@g" /usr/local/etc/ipUpdaterd.conf
+    sed -ri "s@myip=''@myip='${ip}'@g" /usr/local/etc/ipUpdaterd.conf
     
     cat <<EOF
 

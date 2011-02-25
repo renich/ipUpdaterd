@@ -13,7 +13,7 @@ source $conf
 # do
 (while :; do
     # DNSEXIT example url: http://www.dnsexit.com/RemoteUpdate.sv?login=yourlogin&password=yourpassword&host=yourhost.yourdomain.com&myip=xxx.xx.xx.xxx
-    logsave $logfile curl -vvvv -G -d "login=$login" -d "password=$password" -d "host=$host" -d "myip=$myip" $service &> /dev/null
+    curl -s -G -d "login=$login" -d "password=$password" -d "host=$host" -d "myip=$myip" $service &> $logfile
     
     if [ $? == 0 ];then
         logger -p daemon.info "this IP has been updated successfully: $myip"
