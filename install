@@ -9,7 +9,7 @@ function isRoot () {
 }
 
 # install
-function install () {
+function installation () {
     install etc/rc.d/init.d/ipUpdaterd /etc/rc.d/init.d
     install usr/local/etc/ipUpdaterd.conf /usr/local/etc
     install usr/local/sbin/ipUpdaterd /usr/local/sbin
@@ -84,7 +84,7 @@ until [[ $confirmation == 'yes' ]]; do
 done
 
 // install files
-install
+installation
 
 // write changes
 commit
