@@ -10,9 +10,9 @@ function isRoot () {
 
 # install
 function installation () {
-    install etc/rc.d/init.d/ipUpdaterd /etc/rc.d/init.d
-    install usr/local/etc/ipUpdaterd.conf /usr/local/etc
-    install usr/local/sbin/ipUpdaterd /usr/local/sbin
+    install etc/rc.d/init.d/ipUpdaterd /etc/rc.d/init.d/ipUpdaterd
+    install usr/local/etc/ipUpdaterd.conf /usr/local/etc/ipUpdaterd.conf
+    install usr/local/sbin/ipUpdaterd /usr/local/sbin/ipUpdaterd
     cat /dev/null > /var/log/ipUpdaterd.log && chcon -u system_u /var/log/ipUpdaterd.log && restorecon /var/log/ipUpdaterd.log
 }
 
@@ -83,11 +83,11 @@ until [[ $confirmation == 'yes' ]]; do
     confirm
 done
 
-// install files
+# install files
 installation
 
-// write changes
+# write changes
 commit
 
-// finalization message
+# finalization message
 message
