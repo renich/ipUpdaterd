@@ -20,7 +20,7 @@ function confirm () {
 # installation
 function uninstallation () {
     # kill the process
-    killall ipUpdaterd
+    service ipUpdaterd stop
     
     # delete files
     rm -f /etc/rc.d/init.d/ipUpdaterd
