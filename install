@@ -1,69 +1,93 @@
 #!/bin/bash
 
 # check if is root
-if [ `id -u` != "0" ]; then
+function isRoot () {
+    if [ `id -u` != "0" ]; then
         echo Command must be ran by root!
         exit 1
-fi
+    fi
+}
 
 # install
-install etc/rc.d/init.d/ipUpdaterd /etc/rc.d/init.d
-install usr/local/etc/ipUpdaterd.conf /usr/local/etc
-install usr/local/sbin/ipUpdaterd /usr/local/sbin
-cat /dev/null > /var/log/ipUpdaterd.log && chcon -u system_u /var/log/ipUpdaterd.log && restorecon /var/log/ipUpdaterd.log
+function install () {
+    install etc/rc.d/init.d/ipUpdaterd /etc/rc.d/init.d
+    install usr/local/etc/ipUpdaterd.conf /usr/local/etc
+    install usr/local/sbin/ipUpdaterd /usr/local/sbin
+    cat /dev/null > /var/log/ipUpdaterd.log && chcon -u system_u /var/log/ipUpdaterd.log && restorecon /var/log/ipUpdaterd.log
+}
 
 # configure
-echo -n "What's your login? "
-read 'login'
+function configure () {
+    echo -n "What's your login? "
+    read 'login'
 
-echo -n "What's your password? "
-read -s 'password'
-password=$(echo -n $password | base64)
+    echo -n "What's your password? "
+    read -s 'password'
+    password=$(echo -n $password | base64)
 
-echo -ne "\nWhat hostname to use? (example: myhost.mydomain.com) "
-read 'host'
+    echo -ne "\nWhat hostname to use? (example: myhost.mydomain.com) "
+    read 'host'
 
-echo -n "Do you want me to get your IP from an interface? (example: no | eth0, wlan0, ppp0, etc) "
-read 'interface'
+    echo -n "Do you want me to get your IP from an interface? (example: no | eth0, wlan0, ppp0, etc) "
+    read 'interface'
 
-if [ $(echo -n $interface | grep -i 'no') ]; then
-    ip=null
-else
-    ip=$(ip -4 address show ${interface} |/bin/awk -F'[/ ]' '/inet/{print$6}')
-fi
+    case $interface in
+        n|no|nO|N|NO|No|null)
+            ip=
+            ;;
+        *)
+            ip=$(ip -4 address show ${interface} |/bin/awk -F'[/ ]' '/inet/{print$6}')
+            ;;
+    esac
+}
 
-echo -n " \
+function confirm () {
+    echo -n " \
 
 Is this correct?
 
-Login:      ${login}
-Password:   <hidden>
-Host:       ${host}
-interface:  ${interface}
+    Login:      ${login}
+    Password:   <hidden>
+    Host:       ${host}
+    interface:  ${interface}
 
-answer (yes|no) " 
-read 'answer'
+    answer (yes|no) "
+    read 'confirmation'
+}
 
-if [ $(echo -n $answer | grep -i 'yes') ]; then
+function commit () {
     sed -ri "s@login='<some user>'@login=${login}@g" /usr/local/etc/ipUpdaterd.conf
     sed -ri "s@password='<some cool password base64 encoded>'@password='${password}'@g" /usr/local/etc/ipUpdaterd.conf
     sed -ri "s@host='<some, already registered, host>'@host='${host}'@g" /usr/local/etc/ipUpdaterd.conf
     sed -ri "s@myip=''@myip='${ip}'@g" /usr/local/etc/ipUpdaterd.conf
-    
+}
+
+function message ()
+{
     cat <<EOF
 
-        Your configuration is done. Feel free to start the service by typing:
-            su -c 'service ipUpdaterd start'
-        
-        And, if you want this service to start at boot, activate it:
-            su -c 'chkconfig ipUpdaterd on'
-    
-        Thank you for using it!
+Your configuration is done. Feel free to start the service by typing:
+    su -c 'service ipUpdaterd start'
+
+And, if you want this service to start at boot, activate it:
+    su -c 'chkconfig ipUpdaterd on'
+
+Thank you for using it!
 
 EOF
 
-    exit 0
-else
-    echo "Configuration aborted. Please, reinstall by re-running this script"
-    exit 2
-fi
+}
+
+until [[ $confirmation == 'yes' ]]; do
+    configure
+    confirm
+done
+
+// install files
+install
+
+// write changes
+commit
+
+// finalization message
+message
