@@ -8,7 +8,7 @@ function isRoot () {
     fi
 }
 
-# install
+# installation
 function installation () {
     install etc/rc.d/init.d/ipUpdaterd /etc/rc.d/init.d/ipUpdaterd
     install usr/local/etc/ipUpdaterd.conf /usr/local/etc/ipUpdaterd.conf
@@ -78,6 +78,10 @@ EOF
 
 }
 
+# check if it's user has root priviledges
+isRoot
+
+# gain info
 until [[ $confirmation == 'yes' ]]; do
     configure
     confirm
@@ -91,3 +95,5 @@ commit
 
 # finalization message
 message
+
+exit 0

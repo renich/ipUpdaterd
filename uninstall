@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# check if is root
+function isRoot () {
+    if [ `id -u` != "0" ]; then
+        echo Command must be ran by root!
+        exit 1
+    fi
+}
+
+function confirm () {
+    echo -n "Are you completely sure you want to uninstall ipUpdaterd? (yes|no)"
+    read answer
+    
+    if [[ $answer != 'yes' ]]; then
+        echo 'Invalid answer provided. Please, run again and answer correctly...'
+    fi
+}
+
+# installation
+function uninstallation () {
+    # kill the process
+    killall ipUpdaterd
+    
+    # delete files
+    rm -f /etc/rc.d/init.d/ipUpdaterd
+    rm -f /usr/local/etc/ipUpdaterd.conf
+    rm -f /usr/local/sbin/ipUpdaterd
+    rm -f /var/log/ipUpdaterd.log
+}
+
+isRoot
+confirm
+
+if [[ $answer == 'yes' ]]; then
+    uninstallation
+else
+    exit 1
+fi
+
+exit 0
