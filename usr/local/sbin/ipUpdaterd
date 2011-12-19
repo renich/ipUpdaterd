@@ -12,14 +12,17 @@ source $conf
 
 # do
 (while :; do
-    # DNSEXIT example url: http://www.dnsexit.com/RemoteUpdate.sv?login=yourlogin&password=yourpassword&host=yourhost.yourdomain.com&myip=xxx.xx.xx.xxx
-    curl -s -G -d "login=$login" -d "password=$password" -d "host=$host" -d "myip=$myip" $service &> $logfile
+    # DNSExit
+    /usr/bin/curl -s -G -d "login=${DNSExit['login']}" -d "password=${DNSExit['password']}" -d "host=${DNSExit['host']}" -d "myip=${Global['myIP']}" ${DNSExit['service']} &> ${DNSExit['log']}
     
     if [ $? == 0 ];then
-        logger -p daemon.info "this IP has been updated successfully: $myip"
+        logger -p daemon.info "DNSEXIT: this IP has been updated successfully."
     else
         logger -p daemon.info "IP update error. Check configuration, network or... something..."
     fi
+
+    # OpenDNS
+    /usr/bin/curl -k -s -G -m 60 -u ${OpenDNS['login']}:${OpenDNS['password']} -d "host=${OpenDNS['host']}" -d "ip=${Global['myIP']}" ${OpenDNS['service']} &> ${OpenDNS['log']}
 
     sleep 10m
 done) & disown -h -ar $!
