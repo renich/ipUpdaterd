@@ -10,7 +10,7 @@ function isRoot () {
 
 # installation
 function installation () {
-    install -m 600 etc/rc.d/init.d/ipUpdaterd /etc/rc.d/init.d/ipUpdaterd
+    install -m 700 etc/rc.d/init.d/ipUpdaterd /etc/rc.d/init.d/ipUpdaterd
     install -m 600 usr/local/etc/ipUpdaterd.conf /usr/local/etc/ipUpdaterd.conf
     install -m 700 usr/local/sbin/ipUpdaterd /usr/local/sbin/ipUpdaterd
     

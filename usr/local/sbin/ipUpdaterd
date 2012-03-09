@@ -1,7 +1,7 @@
 #!/bin/bash
-# Last Update: Mon 20 Dec 2010 11:24:26 AM CST 
+# Last Update: Fri 09 Mar 2012 03:07:25 PM CST 
 #
-# Renich Bon Ciric <renich@intranetgb.com>
+# Renich Bon Ciric <renich@woralelandia.com>
 # GPLv3
 #
 # Simple IP updater for DNSExit: http://dnsexit.com/
@@ -13,16 +13,25 @@ source $conf
 # do
 (while :; do
     # DNSExit
-    /usr/bin/curl -s -G -d "login=${DNSExit['login']}" -d "password=${DNSExit['password']}" -d "host=${DNSExit['host']}" -d "myip=${Global['myIP']}" ${DNSExit['service']} &> ${DNSExit['log']}
-    
-    if [ $? == 0 ];then
-        logger -p daemon.info "DNSEXIT: this IP has been updated successfully."
-    else
-        logger -p daemon.info "IP update error. Check configuration, network or... something..."
+    if (( OpenDNS['enabled'] )); then
+        /usr/bin/curl -s -G -d "login=${DNSExit['login']}" -d "password=${DNSExit['password']}" -d "host=${DNSExit['host']}" -d "myip=${Global['myIP']}" ${DNSExit['service']} &> ${DNSExit['log']}
+        
+        if [ $? == 0 ];then
+            logger -p daemon.info "DNSEXIT: this IP has been updated successfully."
+        else
+            logger -p daemon.info "DNSEXIT: IP update error. Check configuration, network or... something..."
+        fi
     fi
-
+    
     # OpenDNS
-    /usr/bin/curl -k -s -G -m 60 -u ${OpenDNS['login']}:${OpenDNS['password']} -d "host=${OpenDNS['host']}" -d "ip=${Global['myIP']}" ${OpenDNS['service']} &> ${OpenDNS['log']}
-
-    sleep 10m
+    if (( OpenDNS['enabled'] )); then
+        /usr/bin/curl -k -s -G -m 60 -u ${OpenDNS['login']}:${OpenDNS['password']} -d "host=${OpenDNS['host']}" -d "ip=${Global['myIP']}" ${OpenDNS['service']} &> ${OpenDNS['log']}
+        if [ $? == 0 ]; then
+            logger -p daemon.info "OpenDNS: this IP has been updated successfully."
+        else
+            logger -p daemon.info "OpenDNS: IP update error. Check configuration, network or... something..."
+        fi
+    fi
+    
+    sleep Global['lap'];
 done) & disown -h -ar $!
