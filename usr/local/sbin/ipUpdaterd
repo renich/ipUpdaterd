@@ -13,25 +13,30 @@ source $conf
 # do
 (while :; do
     # DNSExit
-    if (( OpenDNS['enabled'] )); then
-        /usr/bin/curl -s -G -d "login=${DNSExit['login']}" -d "password=${DNSExit['password']}" -d "host=${DNSExit['host']}" -d "myip=${Global['myIP']}" ${DNSExit['service']} &> ${DNSExit['log']}
+    if (( ${DNSExit['enabled']} )); then
+        runuser /usr/bin/curl -s -G -d "login=${DNSExit['login']}" -d "password=${DNSExit['password']}" -d "host=${DNSExit['host']}" -d "myip=${Global['myIP']}" ${DNSExit['service']} &> ${DNSExit['log']}
+        
+        echo '-----------------------------------------------------------------'
         
         if [ $? == 0 ];then
             logger -p daemon.info "DNSEXIT: this IP has been updated successfully."
         else
-            logger -p daemon.info "DNSEXIT: IP update error. Check configuration, network or... something..."
+            logger -p daemon.error "DNSEXIT: IP update error. Check configuration, network or... something..."
         fi
     fi
     
     # OpenDNS
-    if (( OpenDNS['enabled'] )); then
-        /usr/bin/curl -k -s -G -m 60 -u ${OpenDNS['login']}:${OpenDNS['password']} -d "host=${OpenDNS['host']}" -d "ip=${Global['myIP']}" ${OpenDNS['service']} &> ${OpenDNS['log']}
+    if (( ${OpenDNS['enabled']} )); then
+        runuser /usr/bin/curl -k -s -G -m 60 -u ${OpenDNS['login']}:${OpenDNS['password']} -d "host=${OpenDNS['host']}" -d "ip=${Global['myIP']}" ${OpenDNS['service']} &> ${OpenDNS['log']}
+        
+        echo '-----------------------------------------------------------------'
+        
         if [ $? == 0 ]; then
             logger -p daemon.info "OpenDNS: this IP has been updated successfully."
         else
-            logger -p daemon.info "OpenDNS: IP update error. Check configuration, network or... something..."
+            logger -p daemon.error "OpenDNS: IP update error. Check configuration, network or... something..."
         fi
     fi
     
-    sleep Global['lap'];
+    sleep ${Global['lap']};
 done) & disown -h -ar $!
