@@ -14,7 +14,7 @@ source $conf
 (while :; do
     # DNSExit
     if (( ${DNSExit['enabled']} )); then
-        runuser /usr/bin/curl -s -G -d "login=${DNSExit['login']}" -d "password=${DNSExit['password']}" -d "host=${DNSExit['host']}" -d "myip=${Global['myIP']}" ${DNSExit['service']} &> ${DNSExit['log']}
+        runuser -c /usr/bin/curl -s -G -d "login=${DNSExit['login']}" -d "password=${DNSExit['password']}" -d "host=${DNSExit['host']}" -d "myip=${Global['myIP']}" ${DNSExit['service']} &> ${DNSExit['log']}
         
         echo '-----------------------------------------------------------------'
         
@@ -27,7 +27,7 @@ source $conf
     
     # OpenDNS
     if (( ${OpenDNS['enabled']} )); then
-        runuser /usr/bin/curl -k -s -G -m 60 -u ${OpenDNS['login']}:${OpenDNS['password']} -d "host=${OpenDNS['host']}" -d "ip=${Global['myIP']}" ${OpenDNS['service']} &> ${OpenDNS['log']}
+        runuser -c /usr/bin/curl -k -s -G -m 60 -u ${OpenDNS['login']}:${OpenDNS['password']} -d "host=${OpenDNS['host']}" -d "ip=${Global['myIP']}" ${OpenDNS['service']} &> ${OpenDNS['log']}
         
         echo '-----------------------------------------------------------------'
         
