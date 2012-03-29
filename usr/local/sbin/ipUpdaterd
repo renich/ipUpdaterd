@@ -11,32 +11,32 @@ conf=/usr/local/etc/ipUpdaterd.conf
 source $conf
 
 # do
-(while :; do
+while :; do
     # DNSExit
     if (( ${DNSExit['enabled']} )); then
-        runuser -c /usr/bin/curl -s -G -d "login=${DNSExit['login']}" -d "password=${DNSExit['password']}" -d "host=${DNSExit['host']}" -d "myip=${Global['myIP']}" ${DNSExit['service']} &> ${DNSExit['log']}
-        
+        /usr/bin/curl -s -G -d "login=${DNSExit['login']}" -d "password=${DNSExit['password']}" -d "host=${DNSExit['host']}" -d "myip=${Global['myIP']}" ${DNSExit['service']} &> ${DNSExit['log']}
+
         echo '-----------------------------------------------------------------'
-        
-        if [ $? == 0 ];then
+
+        if [ $? == 0 ]; then
             logger -p daemon.info "DNSEXIT: this IP has been updated successfully."
         else
             logger -p daemon.error "DNSEXIT: IP update error. Check configuration, network or... something..."
         fi
     fi
-    
+
     # OpenDNS
     if (( ${OpenDNS['enabled']} )); then
-        runuser -c /usr/bin/curl -k -s -G -m 60 -u ${OpenDNS['login']}:${OpenDNS['password']} -d "host=${OpenDNS['host']}" -d "ip=${Global['myIP']}" ${OpenDNS['service']} &> ${OpenDNS['log']}
-        
+        /usr/bin/curl -k -s -G -m 60 -u ${OpenDNS['login']}:${OpenDNS['password']} -d "host=${OpenDNS['host']}" -d "ip=${Global['myIP']}" ${OpenDNS['service']} &> ${OpenDNS['log']}
+
         echo '-----------------------------------------------------------------'
-        
+
         if [ $? == 0 ]; then
             logger -p daemon.info "OpenDNS: this IP has been updated successfully."
         else
             logger -p daemon.error "OpenDNS: IP update error. Check configuration, network or... something..."
         fi
     fi
-    
+
     sleep ${Global['lap']};
-done) & disown -h -ar $!
+done & disown -h -ar $!
