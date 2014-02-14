@@ -20,10 +20,10 @@ function confirm () {
 # installation
 function uninstallation () {
     # kill the process
-    service ipUpdaterd stop
+    systemctl stop ipUpdaterd.service
     
     # delete files
-    rm -f /etc/rc.d/init.d/ipUpdaterd
+    rm -f /etc/systemd/system/ipUpdaterd.service
     rm -f /usr/local/etc/ipUpdaterd.conf
     rm -f /usr/local/sbin/ipUpdaterd
     rm -f /var/log/ipUpdaterd.log

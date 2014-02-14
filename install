@@ -10,14 +10,12 @@ function isRoot () {
 
 # installation
 function installation () {
-    install -m 400 lib/systemd/system/ipUpdaterd.service /lib/systemd/system/ipUpdaterd.service
+    install -m 400 lib/systemd/system/ipUpdaterd.service /etc/systemd/system/ipUpdaterd.service
     install -m 600 usr/local/etc/ipUpdaterd.conf /usr/local/etc/ipUpdaterd.conf
     install -m 700 usr/local/sbin/ipUpdaterd /usr/local/sbin/ipUpdaterd
     
     # restore SELinux stuff
-    chcon -u system_u /var/log/ipUpdaterd*.log &> /dev/null
-    restorecon /var/log/ipUpdaterd*.log &> /dev/null
-    restorecon /lib/systemd/system/ipUpdaterd.service &> /dev/null
+    restorecon /etc/systemd/system/ipUpdaterd.service &> /dev/null
 }
 
 # configure
