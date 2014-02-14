@@ -10,13 +10,14 @@ function isRoot () {
 
 # installation
 function installation () {
-    install -m 700 etc/rc.d/init.d/ipUpdaterd /etc/rc.d/init.d/ipUpdaterd
+    install -m 400 lib/systemd/system/ipUpdaterd.service /lib/systemd/system/ipUpdaterd.service
     install -m 600 usr/local/etc/ipUpdaterd.conf /usr/local/etc/ipUpdaterd.conf
     install -m 700 usr/local/sbin/ipUpdaterd /usr/local/sbin/ipUpdaterd
     
     # restore SELinux stuff
-    chcon -u system_u /var/log/ipUpdaterd*.log 
-    restorecon /var/log/ipUpdaterd*.log
+    chcon -u system_u /var/log/ipUpdaterd*.log &> /dev/null
+    restorecon /var/log/ipUpdaterd*.log &> /dev/null
+    restorecon /lib/systemd/system/ipUpdaterd.service &> /dev/null
 }
 
 # configure
@@ -71,12 +72,13 @@ function message ()
 
 Once you edit /usr/local/etc/ipUpdard.conf, Your configuration is done. 
 Feel free to start the service by typing:
-    su -c 'service ipUpdaterd start'
+    su -c 'systemctl start ipUpdaterd.service'
 
 And, if you want this service to start at boot, activate it:
-    su -c 'chkconfig ipUpdaterd on'
+    su -c 'systemctl enable ipUpdaterd.service'
 
 Thank you for using it!
+
 EOF
 
 }

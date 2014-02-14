@@ -1,0 +1,10 @@
+[Unit]
+Description=A dynamic ip client for DnsExit.com
+After=syslog.target network.target 
+
+[Service]
+ExecStart=/usr/local/sbin/ipUpdaterd
+
+[Install]
+WantedBy=multi-user.target
+
